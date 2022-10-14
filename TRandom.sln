@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRandom", "TRandom\TRandom.csproj", "{571E0232-EEFC-40CB-AF1D-099C0B9361C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandBox.Trandom", "SandBox.Trandom\SandBox.Trandom.csproj", "{2D27836C-0673-43A7-917B-CB4CD86974BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{571E0232-EEFC-40CB-AF1D-099C0B9361C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{571E0232-EEFC-40CB-AF1D-099C0B9361C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{571E0232-EEFC-40CB-AF1D-099C0B9361C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{571E0232-EEFC-40CB-AF1D-099C0B9361C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D27836C-0673-43A7-917B-CB4CD86974BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D27836C-0673-43A7-917B-CB4CD86974BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D27836C-0673-43A7-917B-CB4CD86974BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D27836C-0673-43A7-917B-CB4CD86974BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B0DF8B47-6BE8-457F-9D18-028B171DEAD5}
+	EndGlobalSection
+EndGlobal
