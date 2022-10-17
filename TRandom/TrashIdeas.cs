@@ -33,11 +33,11 @@ namespace TRandom
 
     //    // length 8 :   he3jFfG2
     //    // length 12 :  F7gk3fd3fqc6
-    //    string Next(int length, Func<TRandomOptions> options); //
+    //string Next(int length, Func<TRandomOptions>? options); //
 
     //    // signature [7,5,5,7,7] => sdgsd32-345gw-3422f-3424643-5345466, divider -, 
     //    // signature [3,4,3] => sdg_345w_34f, divider _, 
-    //    string Next(byte[] signature, char divider, Func<TRandomOptions> options);
+    //string Next(byte[] signature, char divider, Func<TRandomOptions>? options);
 
     //    // ----------------         type of bool         -----------------
 
