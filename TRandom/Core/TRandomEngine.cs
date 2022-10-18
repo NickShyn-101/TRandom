@@ -37,25 +37,47 @@ namespace TRandom.Core
         /// </summary>
         private void GenerateByteList()
         {
+            var resultList = new List<int>();
+
             for (int i = 0; i < charIndexes.Length; i++)
             {
                 Random random = new();
 
                 // соотношение количества символов из кадого массива (в выборке кратной 10 символам мы получим +3 за каджый шаг)
-                var ratio = Convert.ToInt32(Math.Round(Convert.ToDecimal(charIndexes[i].Length / 3), 0));
+                var ratio = Convert.ToInt32(
+                    Math.Round(
+                        Convert.ToDecimal(
+                            charIndexes[i].Length / 3), 0
+                            ));
 
                 // дополнительная погрешность в количестве символов в массиве для увеличения случайности
-                var uncertainty = random.Next(0, 4);
+                var uncertainty = random.Next(ratio * -1, ratio); 
 
-                for (int k = 0; k < ratio + uncertainty; k++)
-                {
+                // количество символов представленных в массиве
+                var instances = (ratio + uncertainty < 1) ? 1 : ratio + uncertainty;
 
-                    var currentArrIndex = random.Next(0, charIndexes.Length);
-                    var currentArrIndexLength = charIndexes[currentArrIndex].Length;
-                    var currentArrItemIndex = random.Next(0, currentArrIndexLength);
+                // генерируем количество символов из каждоей категории (массива) пропорционально
+                // количеству символов минимального элемента массива и ммаксимального
+                // погрешность и его производная instances задаёт количество символов
+                // в представленных будущем массиве, тоесть:
+                // сначала берётся перый массив у него из 10 значений должны выбраться 3
+                // но uncertainty может 
+ 
+                    for (int k = 0; k < instances; k++)
+                    {
+
+                        var currentArrIndex = random.Next(0, charIndexes.Length);
+                        var currentArrIndexLength = charIndexes[currentArrIndex].Length;
+                        var currentArrItemIndex = random.Next(0, currentArrIndexLength);
 
                     ByteList.Add(charIndexes[currentArrIndex][currentArrItemIndex]);
-                }
+                        //resultList.Add(charIndexes[currentArrIndex][currentArrItemIndex]);
+                    }
+
+                // если удаляем дубликаты,из циклического списка и запивыаем уникальные значения в главный список
+                // тогда получается соотношение вычисления не равное, где массиву с большим количеством знаков удаётся получить
+                // больше знаков в итоге [numbers = 281][letters = 349][signs = 370] 
+                //ByteList = resultList.Union(resultList).ToList();
             }
         }
 
@@ -74,6 +96,8 @@ namespace TRandom.Core
         {
             GenerateByteList();
 
+            //var sb = new StringBuilder();
+            //Console.WriteLine(sb.AppendJoin(",", ByteList));
             Random bigOrSmall = new Random();
             Random randomIndex = new Random();
 
