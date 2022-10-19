@@ -1,9 +1,11 @@
-﻿namespace TRandom.Core
+﻿namespace TRandomLib.Core
 {
     public class TRandomOptions
     {
 
         private byte[] _buffer;
+
+        public TRandomOptions() { }
 
         public TRandomOptions(byte[] buffer)
         {

@@ -2,68 +2,70 @@
 
 using System.Collections.Generic;
 using System.Text;
-using TRandom;
-using TRandom.Core;
+using TRandomLib;
+using TRandomLib.Core;
 using static System.Net.Mime.MediaTypeNames;
-using static TRandom.Core.TRandomEngine;
+using static TRandomLib.Core.TRandomEngine;
 
 
-TRandomEngine random = new TRandomEngine(new()
-{
-    UseBigLetters = true,
-    UseNumbers = true,
-    UseSmallLetters = true,
-    UseSymbols = true,
-    UseSpace = true
-});
+TRandom<string> random1 = new TRandom<string>().UseRandomString(50);
+Console.WriteLine(random1.Next());
+Console.WriteLine(random1.Next());
+Console.WriteLine(random1.Next());
+Console.WriteLine(random1.Service.Next());
+Console.WriteLine(random1.Service.Next());
+Console.WriteLine(random1.Service.Next());
+Console.WriteLine(random1.Service.Next());
 
+TRandom<int> random2 = new TRandom<int>();
+Console.WriteLine(random1.Next());
 
-for (int j = 0; j < 20; j++)
-{
+//for (int j = 0; j < 20; j++)
+//{
 
-    Dictionary<int, int> symbols = new Dictionary<int, int>();
-    Dictionary<string, int> resultCategories = new Dictionary<string, int>();
-    resultCategories.Add("numbers", 0);
-    resultCategories.Add("letters", 0);
-    resultCategories.Add("signs", 0);
+//    Dictionary<int, int> symbols = new Dictionary<int, int>();
+//    Dictionary<string, int> resultCategories = new Dictionary<string, int>();
+//    resultCategories.Add("numbers", 0);
+//    resultCategories.Add("letters", 0);
+//    resultCategories.Add("signs", 0);
 
-    for (int i = 0; i < 1000; i++)
-    {
-        var res = random.GetCharByteCode();
-        if (symbols.ContainsKey(res))
-        {
-            symbols[res]++;
-        }
-        else
-        {
-            symbols.Add(res, 0);
-        }
+//    for (int i = 0; i < 1000; i++)
+//    {
+//        var res = random.GetCharCode();
+//        if (symbols.ContainsKey(res))
+//        {
+//            symbols[res]++;
+//        }
+//        else
+//        {
+//            symbols.Add(res, 0);
+//        }
 
-        if (res > 47 && res < 58)
-        {
-            resultCategories["numbers"] += 1;
-        }
-        else if ((res > 64 && res < 91) || (res > 96 && res < 123))
-        {
-            resultCategories["letters"] += 1;
-        }
-        else
-        {
-            resultCategories["signs"] += 1;
-        }
+//        if (res > 47 && res < 58)
+//        {
+//            resultCategories["numbers"] += 1;
+//        }
+//        else if ((res > 64 && res < 91) || (res > 96 && res < 123))
+//        {
+//            resultCategories["letters"] += 1;
+//        }
+//        else
+//        {
+//            resultCategories["signs"] += 1;
+//        }
 
-    }
-    Console.WriteLine();
-    Console.WriteLine($"Результат генерации цикла №{j} ");
-    foreach (var item in resultCategories)
-    {
-        Console.WriteLine($"[{item.Key}]:   {item.Value}");
-    }
-    Console.WriteLine($"_________________________");
-    Console.WriteLine($"Total: {resultCategories.Sum(i => i.Value)} | Min: {resultCategories.Min(i => i.Value)} | Max: {resultCategories.Max(i => i.Value)}");
-    
-    Console.WriteLine();
-}
+//    }
+//    Console.WriteLine();
+//    Console.WriteLine($"Результат генерации цикла №{j} ");
+//    foreach (var item in resultCategories)
+//    {
+//        Console.WriteLine($"[{item.Key}]:   {item.Value}");
+//    }
+//    Console.WriteLine($"_________________________");
+//    Console.WriteLine($"Total: {resultCategories.Sum(i => i.Value)} | Min: {resultCategories.Min(i => i.Value)} | Max: {resultCategories.Max(i => i.Value)}");
+
+//    Console.WriteLine();
+//}
 
 //foreach (var item in symbols.OrderBy(p => p.Key))
 //{

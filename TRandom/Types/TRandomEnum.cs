@@ -1,4 +1,4 @@
-﻿namespace TRandom.Types
+﻿namespace TRandomLib.Types
 {
     public class TRandomEnum<T> : ITRandom<IEnumerable<T>> 
     {

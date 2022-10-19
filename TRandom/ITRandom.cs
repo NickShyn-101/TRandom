@@ -1,4 +1,4 @@
-﻿namespace TRandom
+﻿namespace TRandomLib
 {
 
     /// <summary>

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TRandom.Core;
 
-namespace TRandom.Core
+namespace TRandomLib.Core
 {
     public class CharGeneratorSettings
     {
@@ -24,16 +20,20 @@ namespace TRandom.Core
             new byte[] { 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 94, 95, 96, 123, 124, 125, 126 } // symbols 
         };
 
-        List<int> ByteList = new List<int>();
+        List<int> CharList = new List<int>();
 
         private readonly CharGeneratorSettings charGenerator;
-        public TRandomEngine(CharGeneratorSettings charGenerator) => this.charGenerator = charGenerator;
+        public TRandomEngine() => this.charGenerator = new CharGeneratorSettings();
 
+
+        
 
         /// <summary>
-        /// данная функция генерирует новый массив из случайных символов при каждом обращении
-        /// тоесть каждый раз мы получаем новый массив со значениями из которых уже будем выбирать
-        /// нужное нам значение для строки
+        /// <para>Данный метод генерирует новый массив случайных символов из ASCII таблицы  при каждом вызове</para>
+        /// <para > тоесть каждый раз мы получаем новый массив со значениями из которых другая функция будет выбирать значение </para>
+        /// <para > Другими словами это первый этап рандомайзера</para>
+        /// <para>На выходе мы генерируем CharList с случайными значениями {48, 65,122,95,100...}</para>
+        /// <para>Длина массива так же не имеет привязаного размера, кроме того что он не может быть меньшим чем 3</para>
         /// </summary>
         private void GenerateByteList()
         {
@@ -41,7 +41,7 @@ namespace TRandom.Core
 
             for (int i = 0; i < charIndexes.Length; i++)
             {
-                Random random = new();
+                TRandomTick random = new();
 
                 // соотношение количества символов из кадого массива (в выборке кратной 10 символам мы получим +3 за каджый шаг)
                 var ratio = Convert.ToInt32(
@@ -51,8 +51,7 @@ namespace TRandom.Core
                             ));
 
                 // дополнительная погрешность в количестве символов в массиве для увеличения случайности
-                var uncertainty = random.Next(ratio * -1, ratio); 
-
+                var uncertainty = random.Tick(ratio * -1, ratio);
                 // количество символов представленных в массиве
                 var instances = (ratio + uncertainty < 1) ? 1 : ratio + uncertainty;
 
@@ -61,161 +60,78 @@ namespace TRandom.Core
                 // погрешность и его производная instances задаёт количество символов
                 // в представленных будущем массиве, тоесть:
                 // сначала берётся перый массив у него из 10 значений должны выбраться 3
-                // но uncertainty может 
- 
-                    for (int k = 0; k < instances; k++)
-                    {
+                // но uncertainty может получиться от 1 до 6 значений в зависимости от ситуации 
+                for (int k = 0; k < instances; k++)
+                {
 
-                        var currentArrIndex = random.Next(0, charIndexes.Length);
-                        var currentArrIndexLength = charIndexes[currentArrIndex].Length;
-                        var currentArrItemIndex = random.Next(0, currentArrIndexLength);
+                    var currentArrIndex = random.Tick(0, charIndexes.Length);
+                    var currentArrLength = charIndexes[currentArrIndex].Length;
+                    var currentArrItemIndex = random.Tick(0, currentArrLength);
 
-                    ByteList.Add(charIndexes[currentArrIndex][currentArrItemIndex]);
-                        //resultList.Add(charIndexes[currentArrIndex][currentArrItemIndex]);
-                    }
+                    // при обычном подходе, когда мы не удаляем дубликаты из резульирующего списка, тогда
+                    // выпбока получается примерно средней ~[numbers = 329][letters = 343][signs = 328]
+                    CharList.Add(charIndexes[currentArrIndex][currentArrItemIndex]);
+                    //resultList.Add(charIndexes[currentArrIndex][currentArrItemIndex]);
+                }
 
                 // если удаляем дубликаты,из циклического списка и запивыаем уникальные значения в главный список
                 // тогда получается соотношение вычисления не равное, где массиву с большим количеством знаков удаётся получить
-                // больше знаков в итоге [numbers = 281][letters = 349][signs = 370] 
-                //ByteList = resultList.Union(resultList).ToList();
+                // больше знаков в итоге ~[numbers = 281][letters = 349][signs = 370] перекос в меньшее для чисел и в большую для занков
+                //CharList = resultList.Union(resultList).ToList();
             }
         }
 
+
         /// <summary>
-        //// очищает текущий список для следующей операции
+        /// очищает текущий список для следующей операции
         /// Нужно что бы получать случайный массив каждый раз и не накапливать данные
         /// </summary>
-        private void ClearByteList() => ByteList.Clear();
-
+        private void ClearByteList() => CharList.Clear();
 
         /// <summary>
         /// Метод генерурующий значение по ascii символа из массива, который мы сгенерировали внутри
         /// </summary>
-        /// <returns></returns>
-        public int GetCharByteCode()
+        /// <returns>e.g a = 97, 0 = 48 ...</returns>
+        public int GetCharCode()
         {
             GenerateByteList();
 
             //var sb = new StringBuilder();
-            //Console.WriteLine(sb.AppendJoin(",", ByteList));
-            Random bigOrSmall = new Random();
-            Random randomIndex = new Random();
+            //Console.WriteLine(sb.AppendJoin(",", CharList));
+            TRandomTick bigOrSmall = new TRandomTick();
+            TRandomTick randomIndex = new TRandomTick();
 
-            var currentIndex = randomIndex.Next(0, ByteList.Count());
-            var result = ByteList[currentIndex];
+            var currentIndex = randomIndex.Tick(0, CharList.Count());
+            var result = CharList[currentIndex];
 
             ClearByteList();
 
+
+            // включаем развитвление при использовании больших букв и маленьких
             if (result > 96 && result < 123)
             {
-                if (charGenerator.UseBigLetters == true && bigOrSmall.Next(0, 2) == 1)
+                if (charGenerator.UseBigLetters == true && bigOrSmall.Tick(0, 2) == 1)
                 {
                     return result - 32;
                 }
                 return result;
-            }            
+            }
             return result;
         }
 
-        private int GetArrayLength()
+
+        public T GenerateNumber<T>(T minValue, T MaxValue) where T: struct
         {
-            int result = 0;
-
-            if (charGenerator.UseSmallLetters || charGenerator.UseBigLetters)
-                result += 1;
-
-            if (charGenerator.UseNumbers)
-                result += 1;
-
-            if (charGenerator.UseSymbols)
-                result += 1;
-
-            return result;
+            T result = default;
+            return (T)result;
         }
 
+        // ToDo => сделать возмодность изменять массивы начальных значений
+
+        // ToDo => Заменить метод Random на свою реализацию TRandomTick.Tick();
+
+        // ToDo => создать конфигурационный статический класс / singleton для возможности выбора основы генератора
+        //          например    генерация на основе уникальной выборки  ~[numbers = 281][letters = 349][signs = 370]
+        //                      генерация на основе равных шансов       ~[numbers = 329][letters = 343][signs = 328]
     }
 }
-
-//private int ClusterLength()
-//{
-//    var min = charIndexes.Min(i => i.Length);
-//    var max = charIndexes.Max(i => i.Length);
-//    var result = 0;
-
-//    if (min >= 3 && min <= 10)
-//        return result = min;
-
-//    return result;
-//}
-
-
-//byte[] symbols = new byte[] { 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 94, 95, 96, 123, 124, 125, 126 }; // symbols
-//randomArray = new byte[GetArrayLength()];
-
-//public string GetChar()
-//{
-//    var arrlength = GetArrayLength();
-
-//    byte[] randomArray = new byte[arrlength];
-
-//    return "";
-//}
-
-
-//private int GetArrayLength()
-//{
-//    int result = 0;
-
-//    if (charGenerator.UseSmallLetters || charGenerator.UseBigLetters)            
-//        result += letters.Length;
-
-//    if (charGenerator.UseNumbers)            
-//        result += numbs.Length;            
-
-//    if (charGenerator.UseSymbols)
-//       result += symbols.Length;            
-
-//    return result;
-//}
-
-//private byte[] SetArrayData()
-//{
-
-
-//    if (charGenerator.UseSmallLetters || charGenerator.UseBigLetters)
-//        randomArray.Append(letters);
-
-//    if (charGenerator.UseNumbers)
-//        result += numbs.Length;
-
-//    if (charGenerator.UseSymbols)
-//        result += symbols.Length;
-
-//    return result;
-//}
-
-// создаётся массив из значений которые будут использоваться в выборке на основе опций
-// где значения являются номерами в таблице ascii
-
-// создаётся новый массив в который случайным образом записываются значения из первого массива
-// по случайному индексу формируется новый массив с данными
-
-//выбирается значение на основе нового случайного массива (в который могут включаться символы, цифры и маленькие буквы)
-
-// если у наших опуций включена возможность Больших букв и если наш генератор получил число 1 (использовать большие буквы)
-// if options.BigLetters == true and (arr[i] > 96 and arr[i] < 123) то смещаем значение на -32 и return char
-
-// byte[] 
-//byte[] 
-
-//var header = new byte[]
-//{
-//    97
-//};
-//Console.WriteLine(header[0]);
-//Console.WriteLine(String.Join(",", Encoding.ASCII.GetString(header)));
-//header[0] -= 32;
-//Console.WriteLine(header[0]);
-//Console.WriteLine(String.Join(",", Encoding.ASCII.GetString(header)));
-//return String.Join(",", Encoding.ASCII.GetString(header));
-
