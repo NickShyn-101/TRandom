@@ -106,6 +106,7 @@ foreach (var item in Engines)
         Console.WriteLine($"{item.Key} - {item.Value} раз");
 }
 Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {TRandomTick.iterationsCount}");
+Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
 Console.WriteLine();
 
 //for (int i = 25; i > 0; i--)
