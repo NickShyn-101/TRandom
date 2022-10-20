@@ -20,10 +20,12 @@ namespace TRandomLib.Types
         {
             TRandomEngine random = new TRandomEngine();
 
-            return random.GenerateNumber<T>();
+            return random.GenerateNumber<T>(_startPoint, _endPoint);
         }    
     }
 
+
+    /* нужно подумать нард реализацией этого могуля */
     public class TRandomInt64 : TRandomNumber<long>
     {
         public TRandomInt64() { }

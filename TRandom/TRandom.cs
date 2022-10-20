@@ -33,11 +33,12 @@ namespace TRandomLib
 
         public TRandom<string> UseRandomString(byte[] signature, char divider) =>
             new TRandom<string>(new TRandomString(signature, divider));
-       
+
 
 
         // integers sbyte > ulong
-        public TRandom<T> UseRandomNumber() { return new TRandom<T>(Service); }
+        //public TRandom<int> UseRandomNumber() => new TRandom<int>(new TRandomNumber<int>());
+    
         //public TRandom<long> UseRandomInt64(T number) => new TRandom<long>(new TRandomInt64());
         //public TRandom<ulong> UseRandomUInt64(T number) => new TRandom<ulong>(new TRandomUInt64());
         //public TRandom<int> UseRandomInt32(T number) => new TRandom<int>(new TRandomInt32());
@@ -61,7 +62,7 @@ namespace TRandomLib
         //      случайный обьект из массива типа Array (object) / (index)
         //      случайный обьект из массива типа List<T> (object) / (index)
         //      случайный обьект из массива типа Dictionary<TKey, TValue> (object) / (index)
-        
+
 
 
 
