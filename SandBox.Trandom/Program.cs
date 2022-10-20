@@ -78,7 +78,7 @@ using static TRandomLib.Core.TRandomEngine;
 //      9_223_372_036_854_775_807
 
 
-SortedList<int, int> Engines = new SortedList<int, int>();
+SortedList<long, int> Engines = new SortedList<long, int>();
 for (int i = 0; i < 1000; i++)
 {
     TRandomTick tick = new TRandomTick();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,52 +35,27 @@ namespace TRandom.Core
             return 0;
         }
 
-        //private byte[]
-
-        public int GetTickResult(int minValue, int maxValue)
+        private void ConvertBitStringToArray(ref string strMax, ref long[] workingArray)
         {
-            iterationsCount++;
-            // переводим числа в бинарный код
-            var strMin = Convert.ToString(minValue, 2);
-            var strMax = Convert.ToString(maxValue, 2);
-
-            StringBuilder result = new StringBuilder();
-
-            // конвертируем всё в массив байт
-            long[] workingArray = new long[strMax.Length];
-            long[] TestArray = new long[strMax.Length];
-
-            // Convert string into array => return array
-            // workingArray.
             for (byte i = 0; i < workingArray.Length; i++)
                 workingArray[i] = Convert.ToByte(strMax[i].ToString());
+        }
 
-            // //////////////////////////////////////////////////////////////////////
-            //                сам процесс генерации случайных чисел
-            //                  (преобразовать в функцию TickTack)
-            // //////////////////////////////////////////////////////////////////////
-
-            // сам процесс генерации случайных чисел
+        private void GenerateRandomSequence(ref long[] workingArray)
+        {
             for (byte j = 0; j < workingArray.Length; j++)
             {
-                workingArray[j] = Convert.ToByte(new Random().Next(0, 2).ToString());
-                TestArray[j] = workingArray[j];
+                workingArray[j] = Convert.ToByte(new Random().Next(0, 2).ToString()); // generate 0/1
+
+                if (workingArray[j] != 0) workingArray[j] = workingArray[j] << workingArray.Length - 1 - j; // pow value
             }
+        }
 
-            //workingArray[j] = TickTack(); // мой метод реализации случайного числа
-            for (byte i = 0; i < TestArray.Length - 1; i++)
-            {
-                if (TestArray[i] != 0)
-                    TestArray[i] = TestArray[i] << TestArray.Length - 1 - i;
-            }
-
-            // //////////////////////////////////////////////////////////////////////
-            //                      проверяем число на максимум
-            //           (преобразовать в void функцию с out значениями)
-            // //////////////////////////////////////////////////////////////////////
-
-            int safeZeroIndexStart = workingArray.Length - 1;
-            int safeZeroIndexEnd = workingArray.Length - 1;
+        private void CheckSafeZeroIndexes(ref string strMax, ref long[] workingArray, out int safeZeroStart , out int safeZeroEnd)
+        {
+      
+             int safeZeroIndexStart = workingArray.Length - 1;
+         int safeZeroIndexEnd = workingArray.Length - 1;
 
 
             for (int i = 0; i < strMax.Length - 1; i++)
@@ -96,10 +72,29 @@ namespace TRandom.Core
                     break;
                 }
 
+            safeZeroStart = safeZeroIndexStart;
+            safeZeroEnd = safeZeroIndexEnd;
+        }
+
+        public long GetTickResult(int minValue, int maxValue)
+        {
+            iterationsCount++;
+            // переводим числа в бинарный код
+            var strMin = Convert.ToString(minValue, 2);
+            var strMax = Convert.ToString(maxValue, 2);
+           
+            long[] workingArray = new long[strMax.Length];  
+
+            ConvertBitStringToArray(ref strMax, ref workingArray);  // заносим каждый знак из строки в отдельный элемент  массива
+            GenerateRandomSequence(ref workingArray);               // генерим значения случайные для каждого элемента массива в виде 0/1
+            CheckSafeZeroIndexes(ref strMax, ref workingArray,      // находим безопасное значение для кода
+                out int safeZeroIndexStart, 
+                out int safeZeroIndexEnd);                          
+
 
             // суммируем все значения из массива и выводим число результат учитывая проверки на максимум и минимум
             long testResult = 0;
-            for (int j = 0; j < TestArray.Length; j++)
+            for (int j = 0; j < workingArray.Length; j++)
             {// проверитьт сумму следующих комбинаций на рсумму и равенство 
 
 
@@ -114,11 +109,11 @@ namespace TRandom.Core
 
 
                     checker++;
-                    //TestArray[checker] == 1
-                } while (TestArray[checker] != 1 && checker < safeZeroIndexStart);
+                    //workingArray[checker] == 1
+                } while (workingArray[checker] != 1 && checker < safeZeroIndexStart);
                 //for (int i = 0; i < safeZeroIndexStart; i++)
                 //{
-                //    if (TestArray[i] == 1) break;                        
+                //    if (workingArray[i] == 1) break;                        
                    
                 //    isSafety = false;
                 //}
@@ -129,32 +124,32 @@ namespace TRandom.Core
                 {
                     for (int z = safeZeroIndexStart; z < safeZeroIndexEnd; z++)
                     {
-                        if (TestArray[z].Equals(0) == true) break;
+                        if (workingArray[z].Equals(0) == true) break;
 
                         long sum = 0;
                         // если индекс равен одному  и сумма значений плюс сумма уже готовая больше чем максимальное число 
                         // заменяем текущий индекс на ноль, а следующий на 1
-                        for (int k = z; k < TestArray.Length; k++)
+                        for (int k = z; k < workingArray.Length; k++)
                         {
-                            if (TestArray[k] == 1)
+                            if (workingArray[k] == 1)
                             {
-                                sum += TestArray[k]; // !!!!!! error
+                                sum += workingArray[k]; // !!!!!! error
                             }
                         }
                         //если значение больше то включаем заменяем текущий индекс массива на 0
                         if (testResult + sum > maxValue)
                         {
-                            TestArray[z] = 0;
-                            TestArray[z + 1] = 1;
+                            workingArray[z] = 0;
+                            workingArray[z + 1] = 1;
                         }
                     }
                 }
 
 
-                testResult += TestArray[j];
+                testResult += workingArray[j];
             }
             // получение и вывод результата          
-            int outInt = Convert.ToInt32(result.AppendJoin("", workingArray).ToString(), 2);
+            //int outInt = Convert.ToInt32(result.AppendJoin("", workingArray).ToString(), 2);
             // нужно избавиться от строки и переделать всё под массив байт, где мы преобразуем число 2^n           
             //тоесть нужно избавиться от result и сделать следующие инструкции
             // - берём workingArray и поочереди каждое значение в ячеки вовводим в степень 
@@ -162,60 +157,11 @@ namespace TRandom.Core
             // --- если n + (n+1) будут больше чем максимальное значение то присваиваем n+1 ноль и суммируем и идём дальше //
             // - выводи результат
 
-            Console.WriteLine($"{maxValue}] число: {Convert.ToString(maxValue, 2)} => {result.ToString()} : {Convert.ToInt32(result.ToString(), 2)}  || >> {outInt} | {Convert.ToString(outInt, 2)}");
+            //Console.WriteLine($"{maxValue}] число: {Convert.ToString(maxValue, 2)} => {result.ToString()} : {Convert.ToInt32(result.ToString(), 2)}  || >> {outInt} | {Convert.ToString(outInt, 2)}");
 
-            return  outInt; // большое количество ложных операций  ~22-32%
+            return testResult; // большое количество ложных операций  ~22-32%
             //return (outInt > maxValue) ? GetTickResult(minValue, maxValue) : outInt; // большое количество ложных операций  ~22-32%
         }
-
-
-
-
-        //// генератор должен быть в безопасной зоне
-        //// мы можем гененрировать любые числа до первого нуля и первой единицы после первого нуля     
-        //// в случае если у нас значения превысят максимальные мы просто заменим это диапазон на нули и получим 
-        //// правильное значение
-        //int safeZeroIndexStart = workingArray.Length - 1;
-        //int safeZeroIndexEnd = workingArray.Length - 1;
-
-
-        //    for (int i = 0; i<workingArray.Length - 1; i++)            
-        //        if (workingArray[i] == 0)
-        //        {
-        //            safeZeroIndexStart = i;
-        //            break;
-        //        }
-
-        //    for (int i = safeZeroIndexStart; i<workingArray.Length - 1; i++)
-        //        if (workingArray[i] == 1)
-        //        {
-        //            safeZeroIndexEnd = i;
-        //            break;
-        //        }
-
-
-        // проверяем индексы на 1 если у них обоих 1 то мы можем ставить любое число в них, в противном случае 
-        // если у первого есть 1 а у второго нет то второе число не может получить единицу
-
-        //разлаживаем входящие числа мин и макс по отдельности на двоичный код 722 => 1011010010 в string builder
-        // каждый индекс проверяем на единицу кроме первого, так как нам нельзая
-        // 
-
-        //1011010010 => 
-        // если [n] индекс == 1 то мы проводим генерацию числа, если он меняется на 0, то следующий [n+1]  может замениться на 1 или 0
-        // в противном случае [n+1] автоматически становиться 0 
-        // остался неизменным то  
-
-
-        //Stopwatch time = Stopwatch.StartNew();
-
-        //time.Stop();
-
-
-        //long tick = time.ElapsedTicks;
-        //var str = Convert.ToString(tick, 2);
-        //result = Convert.ToByte(time.ElapsedTicks % 2);
-        //Console.WriteLine($"[] Внутренний стопвоч: Тики {tick}  | Результат: {result} | binary: {str}");
 
 
         public int Tick(int minvalue, int maxvalue)
@@ -229,3 +175,55 @@ namespace TRandom.Core
         }
     }
 }
+
+
+
+
+
+
+
+//// генератор должен быть в безопасной зоне
+//// мы можем гененрировать любые числа до первого нуля и первой единицы после первого нуля     
+//// в случае если у нас значения превысят максимальные мы просто заменим это диапазон на нули и получим 
+//// правильное значение
+//int safeZeroIndexStart = workingArray.Length - 1;
+//int safeZeroIndexEnd = workingArray.Length - 1;
+
+
+//    for (int i = 0; i<workingArray.Length - 1; i++)            
+//        if (workingArray[i] == 0)
+//        {
+//            safeZeroIndexStart = i;
+//            break;
+//        }
+
+//    for (int i = safeZeroIndexStart; i<workingArray.Length - 1; i++)
+//        if (workingArray[i] == 1)
+//        {
+//            safeZeroIndexEnd = i;
+//            break;
+//        }
+
+
+// проверяем индексы на 1 если у них обоих 1 то мы можем ставить любое число в них, в противном случае 
+// если у первого есть 1 а у второго нет то второе число не может получить единицу
+
+//разлаживаем входящие числа мин и макс по отдельности на двоичный код 722 => 1011010010 в string builder
+// каждый индекс проверяем на единицу кроме первого, так как нам нельзая
+// 
+
+//1011010010 => 
+// если [n] индекс == 1 то мы проводим генерацию числа, если он меняется на 0, то следующий [n+1]  может замениться на 1 или 0
+// в противном случае [n+1] автоматически становиться 0 
+// остался неизменным то  
+
+
+//Stopwatch time = Stopwatch.StartNew();
+
+//time.Stop();
+
+
+//long tick = time.ElapsedTicks;
+//var str = Convert.ToString(tick, 2);
+//result = Convert.ToByte(time.ElapsedTicks % 2);
+//Console.WriteLine($"[] Внутренний стопвоч: Тики {tick}  | Результат: {result} | binary: {str}");
