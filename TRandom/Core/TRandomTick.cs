@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,8 @@ namespace TRandom.Core
         //      например получили 1553 => 1 + 5 + 5 + 3 = 14 => % 2 => 1 или 0
         //  получившиеся значение возвращаем 
 
+        Random random = new Random();
+
         public byte TickTack()
         {
             /// 
@@ -39,11 +42,11 @@ namespace TRandom.Core
                 bitArray[i] = Convert.ToByte(bitString[i].ToString());
         }
 
-        private void GenerateRandomSequence(byte[] maxValueArray, ref byte[] workingArray)        
-        { 
+        private void GenerateRandomSequence(byte[] maxValueArray, ref byte[] workingArray)
+        {
             for (byte j = 0; j < workingArray.Length; j++)
-            {           
-                workingArray[j] = Convert.ToByte(new Random().Next(0, 2).ToString()); // generate 0/1
+            {
+                workingArray[j] = 1; //Convert.ToByte(new Random().Next(0, 2).ToString()); // generate 0/1
 
             }
         }
@@ -53,10 +56,10 @@ namespace TRandom.Core
             long[] resultArray = new long[workingArray.Length];
 
             for (int i = 0; i < workingArray.Length; i++)
-                    resultArray[i] = workingArray[i];
-            
-            for (byte j = 0; j < resultArray.Length; j++)            
-                 if (resultArray[j] != 0)
+                resultArray[i] = workingArray[i];
+
+            for (byte j = 0; j < resultArray.Length; j++)
+                if (resultArray[j] != 0)
                     resultArray[j] = resultArray[j] << resultArray.Length - 1 - j;
 
             return resultArray;
@@ -90,46 +93,90 @@ namespace TRandom.Core
 
         private long[] ChangeArrayIfNotSignature(ref byte[] workingArray, ref int iteration)
         {
-            iteration++;      
+            iteration++;
 
             for (int i = 0; i < workingArray.Length; i++)
                 workingArray[i] = Convert.ToByte(new Random().Next(0, 2).ToString()); // generate 0/1
-   
 
-            return CalculateBinaryInArray(workingArray); 
+
+            return CalculateBinaryInArray(workingArray);
         }
 
         public long GetTickResult(int minValue, int maxValue)
         {
             iterationsCount++;
-            string strMin = Convert.ToString(minValue, 2);
-            //string strMax = Convert.ToString(maxValue, 2);
-
+            //string strMin = Convert.ToString(minValue, 2);
+            string strMax = Convert.ToString(maxValue, 2);
             var valueRange = maxValue - minValue;
-            string strMax = Convert.ToString(valueRange, 2);
+
             byte[] workingArray = new byte[strMax.Length];  // main
-            byte[] maxValueArray = new byte[strMax.Length]; 
-        
-            ConvertBitStringToArray(ref strMax, ref maxValueArray);  // заносим каждый знак из строки в отдельный элемент  массива
-            GenerateRandomSequence(maxValueArray, ref workingArray);     // генерим значения случайные для каждого элемента рабочего массива в виде 0/1
+            byte[] maxValueArray = new byte[strMax.Length];
+
+            ConvertBitStringToArray(ref strMax, ref maxValueArray);  // заносим каждый знак из строки в отдельный элемент  массива // 600 тиков
+            GenerateRandomSequence(maxValueArray, ref workingArray); // генерим значения случайные для каждого элемента рабочего массива в виде 0/1 // 5000 тиков
             var result = CalculateBinaryInArray(workingArray).Sum();
 
 
-            while (result > valueRange)
-                result = ChangeArrayIfNotSignature(ref workingArray, ref iterationsCount).Sum();
+            //while (result > valueRange)
+            //result = ChangeArrayIfNotSignature(ref workingArray, ref iterationsCount).Sum();
 
             return minValue + result;  // большое количество ложных операций  ~22-56%
         }
 
 
-        public long GetTickResultV2(int minValue, int maxValue)
+
+        public long GetTickResultV2(long minValue, long maxValue)
         {
             iterationsCount++;
+            long range = maxValue - minValue;
 
-            var valueRange = maxValue - minValue;
 
-            return minValue + valueRange;
+            // новый алгоритм на основе сдвига
+
+            // берём диапазон числел который представляет разницу между максимальным и минимальным числом
+
+            // добавляем случайную операцию которая  выбирает, или вычесть из максимального числа  результат или добавить к минимальному
+
+            var prevResult = 0;
+            var calcResult = random.Next(0, 2);
+
+            for (byte  i = 0; i < byte.MaxValue - 1; i++)            
+                if (calcResult < range)
+                {
+                    calcResult = calcResult << 1;
+                    if (random.Next(0, 2) != 0)
+                        calcResult += 1;
+
+                    if (calcResult <= range)
+                    {
+                        prevResult = calcResult;
+                    }
+                    else
+                    {
+                        return GetTickResultV2(minValue, maxValue);
+                    }
+                }
+                else
+                {
+                    break;
+                }              
+
+            // есть 2 варианта работы с числом
+            // 01 = добавить единицу
+            // 10 = сделать сдвиг 
+
+            return minValue + prevResult;
         }
+
+
+        //public long GetTickResultV2(int minValue, int maxValue)
+        //{
+        //    iterationsCount++;
+
+        //    var valueRange = maxValue - minValue;
+
+        //    return minValue + valueRange;
+        //}
 
 
 

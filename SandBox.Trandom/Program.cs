@@ -78,50 +78,73 @@ using static TRandomLib.Core.TRandomEngine;
 //      9_223_372_036_854_775_807
 
 
+
+
+
+
+
 for (int j = 0; j < 10; j++)
 {
 
 
-Stopwatch sw = Stopwatch.StartNew();
-Console.WriteLine($"Идеёт просчёт...");
-Console.WriteLine();
-SortedList<long, int> Engines = new SortedList<long, int>();
-for (int i = 0; i < 1000000; i++)
-{
-    TRandomTick tick = new TRandomTick();
-        //var res = tick.GetTickResult(95000, 100000);
-        var res = tick.GetTickResult(95000, 100000);
-        //var res = new Random().Next(95000, 100000);
-        if (Engines.ContainsKey(res)) {
-        Engines[res] += 1;
-    } else
+    Stopwatch sw = Stopwatch.StartNew();
+    Console.WriteLine($"Идеёт просчёт...");
+    Console.WriteLine();
+    SortedList<long, int> Engines = new SortedList<long, int>();
+    for (int i = 0; i < 1000000; i++)
     {
-        Engines.Add(res, 1);
+        TRandomTick tick = new TRandomTick();
+        //var res = tick.GetTickResult(95000, 100000);
+        var res = tick.GetTickResultV2(0, 1);    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков
+        //var res = new Random().Next(0, 10); //640 mc // те же условия но 560 тиков
+        if (Engines.ContainsKey(res))
+        {
+            Engines[res] += 1;
+        }
+        else
+        {
+            Engines.Add(res, 1);
+        }
+
     }
 
+
+    foreach (var item in Engines)
+    {
+        //if (item.Value > 4)
+        //{
+        //    Console.WriteLine($"{item.Key} - {item.Value} раз ----------");
+        //} else if (item.Value > 5)
+        //{
+        //    Console.WriteLine($"{item.Key} - {item.Value} раз !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+
+        //}
+        Console.WriteLine($"{item.Key} - {item.Value} раз");
+    }
+    Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {TRandomTick.iterationsCount}");
+    Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
+    Console.WriteLine();
+    sw.Stop();
+    Console.WriteLine($"Затрачено времени {sw.ElapsedMilliseconds}, :тики {sw.ElapsedTicks}");
+    Console.WriteLine();
+    Console.WriteLine();
 }
 
 
-//foreach (var item in Engines)
-//{
-//    //if (item.Value > 4)
-//    //{
-//    //    Console.WriteLine($"{item.Key} - {item.Value} раз ----------");
-//    //} else if (item.Value > 5)
-//    //{
-//    //    Console.WriteLine($"{item.Key} - {item.Value} раз !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
 
-//    //}
-//        Console.WriteLine($"{item.Key} - {item.Value} раз");
-//}
-Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {TRandomTick.iterationsCount}");
-Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
-Console.WriteLine();
-sw.Stop();
-Console.WriteLine($"Затрачено времени {sw.ElapsedMilliseconds}, :тики {sw.ElapsedTicks}");
-Console.WriteLine();
-Console.WriteLine();
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 //for (int i = 25; i > 0; i--)
 //{
 //    Console.WriteLine(Convert.ToString(i, 2));
