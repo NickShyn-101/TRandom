@@ -1,47 +1,89 @@
-﻿using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TRandom.Core
+﻿namespace TRandom.Core
 {
     /// <summary>
     /// Ядро генератора случайных чисел, которое не зависит от Random (в будущем) 
     /// и реализует собственнный способ генерации случайных числел
-    /// как идея - генерация чисел на уровне бинарного кода
-    /// - задаётся шаблон
-    /// - делается сдвиг (право или лево)
-    /// - выводиться результат в виде массива байтов
     /// </summary>
     public class TRandomTick
     {
-        public static int iterationsCount = 0;
+        public int iterationsCount = 0;
         Random random = new Random();
 
-        private void ConvertBitStringToArray(ref string bitString, ref byte[] bitArray)
+        HashCode hash = new HashCode();
+
+
+        public long Seed { get; set; }
+
+        long TimeStamp { get; set; }
+
+        public long seedMod = 0;
+
+        public TRandomTick()
         {
-            for (byte i = 0; i < bitArray.Length; i++)
-                bitArray[i] = Convert.ToByte(bitString[i].ToString());
+            TimeStamp = DateTime.Now.Ticks;
+            Seed = TimeStamp % int.MaxValue;
+            if (Seed < 100)
+                Seed = TimeStamp % 512;
         }
-       
-        private int TickTack() => random.Next(0,2);
-       
-        public long GetTickResultV2(long minValue, long maxValue)
+
+        public byte TickDemo()
+        {
+            var CalcResult = ((Seed + 1) << 15) % short.MaxValue;
+
+            Seed = Seed + CalcResult;
+
+            if (Seed % 2 == 1) return 1;
+
+            return 0;
+
+
+            //var CurrentStamp = DateTime.Now.Ticks;
+
+            //var res = CurrentStamp - TimeStamp;
+
+
+
+            //var CalcResult = ((Seed + 1) << 15) % short.MaxValue;
+            //var offset = CalcResult % 8;
+            //Seed = Seed + CalcResult + ((CalcResult + 1)) - Seed ^ CalcResult;
+
+
+            //if (res % 2 == 1) return 1;
+
+            //return 0;
+        }
+
+
+        private int TickTack()
+        {
+
+            hash.Add(Seed);
+            var xv = hash.ToHashCode();
+            if (xv < 0) xv *= -1;
+            xv = xv >> 2 ;
+            xv++;
+            Seed = Seed + xv  ;
+
+            if (Seed % 2 == 1)
+                return 1;
+            return 0;
+
+        }
+
+        public long GetNumber(long minValue, long maxValue)
         {
             iterationsCount++;
+            
             long range = maxValue - minValue;
-            string strMax = Convert.ToString(maxValue, 2); //560
+            string strMax = Convert.ToString(maxValue, 2);
 
-
-            // новый алгоритм на основе сдвига
             long prevResult = 0;
-            long calcResult = TickTack(); // стартуем либо с 1 либо 0
 
+            hash.Add(range);
+            hash.Add(prevResult);
+
+            long calcResult = TickTack(); // StartValue 1/0
+   
             for (byte i = 0; i < strMax.Length - 1; i++)
             {
                 if (calcResult > range) break;
@@ -49,17 +91,15 @@ namespace TRandom.Core
                 calcResult = calcResult << 1;
                 if (TickTack() != 0) calcResult += 1;
 
-
-                if (calcResult <= range) 
+                if (calcResult <= range)
                 {
                     prevResult = calcResult;
                 }
                 else
                 {
-                    return GetTickResultV2(minValue, maxValue);
+                    return GetNumber(minValue, maxValue);
                 }
             }
-
             return minValue + prevResult;
         }
 
@@ -70,7 +110,3 @@ namespace TRandom.Core
         }
     }
 }
-
-
-
-

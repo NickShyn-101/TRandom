@@ -44,11 +44,10 @@ namespace TRandomLib.Core
                 TRandomTick random = new();
 
                 // соотношение количества символов из кадого массива (в выборке кратной 10 символам мы получим +3 за каджый шаг)
-                var ratio = Convert.ToInt32(
-                    Math.Round(
-                        Convert.ToDecimal(
-                            charIndexes[i].Length / 3), 0
-                            ));
+                var ratio = 
+                    Math.Sign(                        
+                            charIndexes[i].Length / 3
+                            );
 
                 // дополнительная погрешность в количестве символов в массиве для увеличения случайности
                 var uncertainty = random.Tick(ratio * -1, ratio);
@@ -95,22 +94,19 @@ namespace TRandomLib.Core
         public int GetCharCode()
         {
             GenerateByteList();
-
-            //var sb = new StringBuilder();
-            //Console.WriteLine(sb.AppendJoin(",", CharList));
-            TRandomTick bigOrSmall = new TRandomTick();
+    
             TRandomTick randomIndex = new TRandomTick();
 
-            var currentIndex = randomIndex.Tick(0, CharList.Count());
-            var result = CharList[currentIndex];
+            int currentIndex = randomIndex.Tick(0, CharList.Count());
+            int result = CharList[currentIndex];
 
             ClearByteList();
 
 
-            // включаем развитвление при использовании больших букв и маленьких
+            // включаем развитвление при использовании больших и маленьких букв
             if (result > 96 && result < 123)
             {
-                if (charGenerator.UseBigLetters == true && bigOrSmall.Tick(0, 2) == 1)
+                if (charGenerator.UseBigLetters == true && randomIndex.Tick(0, 2) == 1)
                 {
                     return result - 32;
                 }
