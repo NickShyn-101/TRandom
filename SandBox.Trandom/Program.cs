@@ -91,11 +91,11 @@ for (int j = 0; j < 10; j++)
     Console.WriteLine($"Идеёт просчёт...");
     Console.WriteLine();
     SortedList<long, int> Engines = new SortedList<long, int>();
-    for (int i = 0; i < 1000000; i++)
+    for (int i = 0; i < 1000; i++)
     {
         TRandomTick tick = new TRandomTick();
         //var res = tick.GetTickResult(95000, 100000);
-        var res = tick.GetTickResultV2(0, 1);    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков
+        var res = tick.GetTickResultV2(5, 15);    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков
         //var res = new Random().Next(0, 10); //640 mc // те же условия но 560 тиков
         if (Engines.ContainsKey(res))
         {
