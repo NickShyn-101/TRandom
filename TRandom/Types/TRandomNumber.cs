@@ -2,25 +2,32 @@
 
 namespace TRandomLib.Types
 {
+
+    public interface ITRandomNumber
+    {
+
+    }
+
+
     public abstract class TRandomNumber<T> : ITRandom<T> where T : struct
     {
-        protected T _startPoint { get; set; }
-        protected T _endPoint { get; set; }
+        protected T _minValue { get; set; }
+        protected T _maxValue { get; set; }
 
         public TRandomNumber() { }
 
-        public TRandomNumber(T endPoint) => _endPoint = endPoint;        
+        public TRandomNumber(T maxValue) => _maxValue = maxValue;        
 
-        public TRandomNumber(T startPoint, T endPoint) 
+        public TRandomNumber(T minValue, T maxValue) 
         {
-            _startPoint = startPoint;
-            _endPoint = endPoint;
+            _minValue = minValue;
+            _maxValue = maxValue;
         }
         public virtual T Next()
         {
             TRandomEngine random = new TRandomEngine();
 
-            return random.GenerateNumber<T>(_startPoint, _endPoint);
+            return random.GenerateNumber<T>(_minValue, _maxValue);
         }    
     }
 
@@ -29,72 +36,72 @@ namespace TRandomLib.Types
     public class TRandomInt64 : TRandomNumber<long>
     {
         public TRandomInt64() { }
-        public TRandomInt64(long endPoint = long.MaxValue) : base(endPoint) => _startPoint = 0;
-        public TRandomInt64(long startPoint = 0, long endPoint = long.MaxValue) : base(startPoint, endPoint) { }
+        public TRandomInt64(long maxValue = long.MaxValue) : base(maxValue) => _minValue = 0;
+        public TRandomInt64(long minValue = 0, long maxValue = long.MaxValue) : base(minValue, maxValue) { }
 
         public override long Next()
         {
-            return _endPoint;
+            return _maxValue;
         }
     }
 
     public class TRandomUInt64 : TRandomNumber<ulong>
     {
         public TRandomUInt64() { }
-        public TRandomUInt64(ulong endPoint = ulong.MaxValue) : base(endPoint) => _startPoint = 0;
-        public TRandomUInt64(ulong startPoint = 0, ulong endPoint = ulong.MaxValue) : base(startPoint, endPoint) { }
+        public TRandomUInt64(ulong maxValue = ulong.MaxValue) : base(maxValue) => _minValue = 0;
+        public TRandomUInt64(ulong minValue = 0, ulong maxValue = ulong.MaxValue) : base(minValue, maxValue) { }
 
         public override ulong Next()
         {
-            return _endPoint;
+            return _maxValue;
         }
     }
 
     public class TRandomInt32 : TRandomNumber<int>
     {
         public TRandomInt32(){}
-        public TRandomInt32(int endPoint = int.MaxValue) : base(endPoint) => _startPoint = 0;
-        public TRandomInt32(int startPoint = 0, int endPoint = int.MaxValue) : base(startPoint, endPoint) {}
+        public TRandomInt32(int maxValue = int.MaxValue) : base(maxValue) => _minValue = 0;
+        public TRandomInt32(int minValue = 0, int maxValue = int.MaxValue) : base(minValue, maxValue) {}
 
         public override int Next()
         {
-            return _endPoint;
+            return _maxValue;
         }
     }
 
     public class TRandomUInt32 : TRandomNumber<uint>
     {
         public TRandomUInt32() { }
-        public TRandomUInt32(uint endPoint = uint.MaxValue) : base(endPoint) => _startPoint = 0;
-        public TRandomUInt32(uint startPoint = 0, uint endPoint = uint.MaxValue) : base(startPoint, endPoint) { }
+        public TRandomUInt32(uint maxValue = uint.MaxValue) : base(maxValue) => _minValue = 0;
+        public TRandomUInt32(uint minValue = 0, uint maxValue = uint.MaxValue) : base(minValue, maxValue) { }
 
         public override uint Next()
         {
-            return _endPoint;
+            return _maxValue;
         }
     }
 
     public class TRandomInt16 : TRandomNumber<short>
     {
         public TRandomInt16() { }
-        public TRandomInt16(short endPoint = short.MaxValue) : base(endPoint) => _startPoint = 0;
-        public TRandomInt16(short startPoint = 0, short endPoint = short.MaxValue) : base(startPoint, endPoint) { }
+        public TRandomInt16(short maxValue = short.MaxValue) : base(maxValue) => _minValue = 0;
+        public TRandomInt16(short minValue = 0, short maxValue = short.MaxValue) : base(minValue, maxValue) { }
 
         public override short Next()
         {
-            return _endPoint;
+            return _maxValue;
         }
     }
 
     public class TRandomUInt16 : TRandomNumber<ushort>
     {
         public TRandomUInt16() { }
-        public TRandomUInt16(ushort endPoint = ushort.MaxValue) : base(endPoint) => _startPoint = 0;
-        public TRandomUInt16(ushort startPoint = 0, ushort endPoint = ushort.MaxValue) : base(startPoint, endPoint) { }
+        public TRandomUInt16(ushort maxValue = ushort.MaxValue) : base(maxValue) => _minValue = 0;
+        public TRandomUInt16(ushort minValue = 0, ushort maxValue = ushort.MaxValue) : base(minValue, maxValue) { }
 
         public override ushort Next()
         {
-            return _endPoint;
+            return _maxValue;
         }
     }
 

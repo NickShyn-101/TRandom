@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using TRandom.Core;
 using TRandomLib;
+using TRandomLib.Core;
 
 //Stopwatch sw1 = Stopwatch.StartNew();
 //Console.WriteLine($"Идеёт просчёт...");
@@ -20,66 +20,147 @@ using TRandomLib;
 //Console.WriteLine();
 
 
+//TRandom<string> randLong = new TRandom<string>().UseRandomString(15);
+
+//Console.WriteLine(randLong.Next());
+//Console.WriteLine(randLong.Next());
+//Console.WriteLine(randLong.Next());
+
+//Console.WriteLine();
+
+TRandom rand = new TRandom();
+Console.WriteLine(rand.Next());
+Console.WriteLine(rand.Next());
+
+Console.WriteLine(rand.Next(10, 60));
+Console.WriteLine(rand.Next(10, 60));
+Console.WriteLine(rand.Next(10, 60));
+Console.WriteLine(rand.Next(10, 60));
+Console.WriteLine(rand.Next(0, 5));
+Console.WriteLine(rand.Next(0, 5));
+Console.WriteLine(rand.Next(0, 5));
+Console.WriteLine(rand.Next(0, 5));
+Console.WriteLine(rand.Next(0, 5));
+Console.WriteLine(rand.Next(0, 5));
+Console.WriteLine(rand.Next(10, 60));
+//Console.WriteLine(rand.Next(10, 60));
+//Console.WriteLine(rand.Next(10, 60));
+//Console.WriteLine(rand.Next(10, 60));
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+Console.WriteLine(rand.NextBool());
+
+
+//for (int j = 0; j < 5; j++)
+//{
+
+
+//    Stopwatch sw = Stopwatch.StartNew();
+
+
+//    Console.WriteLine($"Идеёт просчёт...");
+//    Console.WriteLine();
+//    SortedList<long, int> Engines = new SortedList<long, int>();
+//    TRandom tick = new TRandom(0, 100);
+//    //Random rand = new Random();  // ~!200
+//    for (int i = 0; i < 1_000_000; i++)
+//    {
+//        //var res = tick.Next();    // 
+//        //var res = tick.GetNumber();               // При отключённых х конвертерах            ~!316
+//        var res = tick.Next();                      // При включенный х конвертерах             ~!884
+//        //var res = rand.Next(0, 100);              // если экземпляр не создаётся каждый раз   ~!196 
+//        //var res = new Random().Next(0, 100);      // если экземпляр  создаётся каждый раз     ~!390
+
+//        if (Engines.ContainsKey(res))
+//        {
+//            Engines[res] += 1;
+//        }
+//        else
+//        {
+//            Engines.Add(res, 1);
+//        }
+//    }
+
+//    Console.WriteLine();
+
+//    foreach (var item in Engines)
+//    {
+//        Console.WriteLine($"{item.Key} - {item.Value} раз");
+//    }
+//    Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}");
+//    Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
+//    Console.WriteLine();
+//    sw.Stop();
+//    Console.WriteLine($"Затрачено времени {sw.ElapsedMilliseconds}, :тики {sw.ElapsedTicks}");
+//    Console.WriteLine();
+//    Console.WriteLine();
+//}
 
 
 
-for (int j = 0; j < 5; j++)
-{
+
+//for (int j = 0; j < 5; j++)
+//{
 
 
-    Stopwatch sw = Stopwatch.StartNew();
+//    Stopwatch sw = Stopwatch.StartNew();
 
 
-    Console.WriteLine($"Идеёт просчёт...");
-    Console.WriteLine();
-    SortedList<long, int> Engines = new SortedList<long, int>();
-    TRandomTick tick = new TRandomTick();
-    StringBuilder sb = new();
-    for (int i = 0; i < 10000; i++)
-    {
+//    Console.WriteLine($"Идеёт просчёт...");
+//    Console.WriteLine();
+//    SortedList<long, int> Engines = new SortedList<long, int>();
+//    TRandomTick tick = new TRandomTick(0,10);
+//    StringBuilder sb = new();
+//    for (int i = 0; i < 1_000_000; i++)
+//    {
 
-        //var res = tick.GetTickResult(95000, 100000);
-        //var res = tick.TickDemo();    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков    last // 467 - 528
-        var res = tick.GetNumber(0, 100);    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков    last // 467 - 528           !850
-        //var res = new Random().Next(10, 15); //640 mc // те же условия но 560 тиков                            last //              ~!320
-        //Console.WriteLine($"seed: {tick.Seed} - seedmod {tick.seedMod}");
-        //Console.WriteLine($"seed_{i}: {res} ");
-        if (Engines.ContainsKey(res))
-        {
-            Engines[res] += 1;
-        }
-        else
-        {
-            Engines.Add(res, 1);
-        }
-        //sb.AppendJoin("-", res.ToString());
+//        //var res = tick.GetTickResult(95000, 100000);
+//        //var res = tick.TickDemo();    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков    last // 467 - 528
+//        var res = tick.GetNumber();    //5800 mc передел алгоритма привёл к цифре 335 - 400 тиков    last // 467 - 528           !850
+//        //var res = new Random().Next(10, 15); //640 mc // те же условия но 560 тиков                            last //              ~!320
+//        //Console.WriteLine($"seed: {tick.Seed} - seedmod {tick.seedMod}");
+//        //Console.WriteLine($"seed_{i}: {res} ");
+//        if (Engines.ContainsKey(res))
+//        {
+//            Engines[res] += 1;
+//        }
+//        else
+//        {
+//            Engines.Add(res, 1);
+//        }
+//        //sb.AppendJoin("-", res.ToString());
 
 
-    }
+//    }
 
-    Console.WriteLine(sb.ToString());
-    Console.WriteLine();
+//    //Console.WriteLine(sb.ToString());
+//    Console.WriteLine();
 
-    foreach (var item in Engines)
-    {
-        //if (item.Value > 4)
-        //{
-        //    Console.WriteLine($"{item.Key} - {item.Value} раз ----------");
-        //} else if (item.Value > 5)
-        //{
-        //    Console.WriteLine($"{item.Key} - {item.Value} раз !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+//    foreach (var item in Engines)
+//    {
+//        //if (item.Value > 4)
+//        //{
+//        //    Console.WriteLine($"{item.Key} - {item.Value} раз ----------");
+//        //} else if (item.Value > 5)
+//        //{
+//        //    Console.WriteLine($"{item.Key} - {item.Value} раз !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
 
-        //}
-        Console.WriteLine($"{item.Key} - {item.Value} раз");
-    }
-    Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {tick.iterationsCount}");
-    Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
-    Console.WriteLine();
-    sw.Stop();
-    Console.WriteLine($"Затрачено времени {sw.ElapsedMilliseconds}, :тики {sw.ElapsedTicks}");
-    Console.WriteLine();
-    Console.WriteLine();
-}
+//        //}
+//        Console.WriteLine($"{item.Key} - {item.Value} раз");
+//    }
+//    Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {tick.iterationsCount}");
+//    Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
+//    Console.WriteLine();
+//    sw.Stop();
+//    Console.WriteLine($"Затрачено времени {sw.ElapsedMilliseconds}, :тики {sw.ElapsedTicks}");
+//    Console.WriteLine();
+//    Console.WriteLine();
+//}
 
 
 

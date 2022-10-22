@@ -1,5 +1,4 @@
-﻿using TRandom.Core;
-
+﻿
 namespace TRandomLib.Core
 {
     public class CharGeneratorSettings
