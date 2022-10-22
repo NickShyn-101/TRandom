@@ -1,20 +1,22 @@
 ﻿namespace TRandomLib.Core
 {
     /// <summary>
-    /// Ядро генератора случайных чисел, которое не зависит от Random (в будущем) 
+    /// Ядро генератора случайных чисел, которое не зависит от Random или других сторонних методов и библиотек (в будущем) 
     /// и реализует собственнный способ генерации случайных числел
     /// </summary>
     public class TRandomTick
     {
         public int iterationsCount = 0;
 
-        private HashCode hash = new HashCode();
+        private HashCode hash = new HashCode();  // временная функция, нужно избавиться 
 
         public long Seed { get; set; }
 
         long HASH1_TimeStamp { get; set; }  // takes the current time in ticks
         long HASH2_Input { get; set; }      // takes min and max value with some calculations and => i++
         long HASH3_PrevResult { get; set; }  // takes the current time in ticks
+
+        const long RES_MASK = 0b1000;   // изменив маску получим смещение резульатов
 
         public long seedMod = 0;
 
@@ -52,7 +54,7 @@
             // нужно переработать, так как есть ошибка при использовании отрицательных чисел
             range = maxValue - minValue;
 
-            hash.Add(range);        // временная функция, нужно избавиться   ~50-100/1m 
+            hash.Add(range);        // временная функция, нужно избавиться 
 
             offsetCycles = 0;
             var ran = range;
@@ -71,22 +73,21 @@
             hash.Add(Seed);         // временная функция, нужно избавиться   ~50-100/1m 
             var xv = hash.ToHashCode();// временная функция, нужно избавиться   ~100-200/1m 
             if (xv < 0) xv *= -1;
-
             xv = (xv >> 3) + 1;
-
             Seed = Seed + xv;
-            var x = Seed % 2;
-            if (x == 1) return 1;
-               
+ 
+            // если изменить маску(0b1000) то измениться распределение и резултат будет смещаться
+            if ((RES_MASK & Seed) != 0)
+                return 1; 
             return 0;
-
         }
 
+        
 
         // Генерирует случайное число из заданного диапазона 
         public long GetNumberInt64()
         {
-            iterationsCount++;  // временная функция
+            iterationsCount++;  // временная функция для теста циклов перезагрузки метода
 
             long prevResult = 0;
 
@@ -105,9 +106,12 @@
                         prevResult = calcResult;            // то запускаем новую итерацию
                     else
                         return GetNumberInt64();
-                    // если число вышло за рамки Range перезапускаем цикл 
+                    // если число вышло за рамки Range перезапускаем цикл  (в итоге получается много рекурсивных запусков метода)
+                    // что в свою очередь может влиять на результат от 40 - 300% затрат времени
                     // если это исправить это можно ускорить алгоритм на 30% вместо ~530мс/1m => 420мс/1m
                     // пока что не знаю как это реализовать что бы не нарушить баланс
+                    // !Idea: сделать анализатор предсказатель будущего числа 
+                    //  = если число в следующей иерации выходит за рамки, то меняем предыдущий бит на 0 и добавлям 1
 
                 }
             }
