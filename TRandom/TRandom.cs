@@ -10,7 +10,7 @@ namespace TRandomLib
         protected long _maxValue { get; set; } = long.MaxValue;
         private readonly TRandomTick _tick = new TRandomTick();
 
-        public TRandom() => _tick = new TRandomTick();
+        public TRandom() { }
         public TRandom(long maxValue)
         {
             _maxValue = maxValue;
@@ -24,16 +24,16 @@ namespace TRandomLib
         }
 
         public bool NextBool() => _tick.GetBool(); 
-        public long Next() => _tick.GetNumber();
+        public long Next() => _tick.GetNumberInt64();
         public long Next(long max)
         {
             _tick.SetNewValues(max);
-            return _tick.GetNumber();
+            return _tick.GetNumberInt64();
         }
         public long Next(long min, long max)
         {
             _tick.SetNewValues(min, max);
-            return _tick.GetNumber();
+            return _tick.GetNumberInt64();
         }
         public int Next(int max)
         {
@@ -46,6 +46,12 @@ namespace TRandomLib
             return _tick.GetNumberInt32(); ;
         }   
 
+
+
+        public long getIterrations()
+        {
+            return _tick.iterationsCount;
+        }
     }
 
 

@@ -16,131 +16,124 @@
         long HASH2_Input { get; set; }      // takes min and max value with some calculations and => i++
         long HASH3_PrevResult { get; set; }  // takes the current time in ticks
 
-
-
-
         public long seedMod = 0;
-
 
         private long minValue { get; set; } = 0;
         private long maxValue { get; set; } = long.MaxValue;
-        private long range { get; set; }
-        private string strMax { get; set; } = null!;
+        private long range { get; set; } = long.MaxValue;
+        private byte offsetCycles { get; set; } = 63;
+        private long PreviousResult { get; set; } = 0;
 
-        public TRandomTick() => SetValues();
-
-        public TRandomTick(long maxValue)
-        {
-            this.maxValue = maxValue;
-
-            SetRandomStartPoint();
-            SetValues();
-        }
-
-        public TRandomTick(long minValue, long maxValue)
-        {
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-
-            SetRandomStartPoint();
-            SetValues();
-
-        }
+        public TRandomTick() => SetRandomStartPoint();
 
         public void SetNewValues(long maxValue)
         {
             this.maxValue = maxValue;
-            SetValues();
-        }
 
+            UpdateValues();
+        }
         public void SetNewValues(long minValue, long maxValue)
         {
             this.minValue = minValue;
             this.maxValue = maxValue;
-            SetValues();
-        }
 
+            UpdateValues();
+        }
 
         private void SetRandomStartPoint()
         {
             HASH1_TimeStamp = DateTime.Now.Ticks;
             Seed = HASH1_TimeStamp % int.MaxValue;
-            if (Seed < 1_000_000) Seed = Seed * 1111;
+            if (Seed < 1_000_000) Seed = Seed * 1111;         
         }
 
-        private void SetValues()
+        private void UpdateValues()
         {      
             // нужно переработать, так как есть ошибка при использовании отрицательных чисел
             range = maxValue - minValue;
 
-            // нужно переработать, и придумать как без конвертера получить длину байтов в двоичном коде
-            // на уме: делать сдвиг range до тех пор пока не будет ноль
-            strMax = Convert.ToString(maxValue, 2);
+            hash.Add(range);        // временная функция, нужно избавиться   ~50-100/1m 
+
+            offsetCycles = 0;
+            var ran = range;
+            while (ran > 0)
+            {
+                ran = ran >> 1;
+                offsetCycles++;
+            }
         }
 
 
         // Ядро рандомайзера который генерирует случайное число в виде 1/0 
-        // Его нужно переделать и ускорить до состояния блискому к стоковому Random (пока что не знаю как)
+        // Его нужно переделать и ускорить до состояния близкому к стоковому Random (пока что не знаю как)
         private byte TickTack()
         {
             hash.Add(Seed);         // временная функция, нужно избавиться   ~50-100/1m 
             var xv = hash.ToHashCode();// временная функция, нужно избавиться   ~100-200/1m 
             if (xv < 0) xv *= -1;
-            xv = xv >> 3;
-            xv++;
-            Seed = Seed + xv;
 
-            if (Seed % 2 == 1)
-                return 1;
+            xv = (xv >> 3) + 1;
+
+            Seed = Seed + xv;
+            var x = Seed % 2;
+            if (x == 1) return 1;
+               
             return 0;
 
         }
 
+
         // Генерирует случайное число из заданного диапазона 
-        public long GetNumber()
+        public long GetNumberInt64()
         {
+            iterationsCount++;  // временная функция
+
             long prevResult = 0;
 
-            iterationsCount++;      // временная функция, нужно избавиться   ~1/1m 
-            hash.Add(range);        // временная функция, нужно избавиться   ~50-100/1m 
-            hash.Add(prevResult);   // временная функция, нужно избавиться   ~50-100/1m 
-
+            PreviousResult = prevResult;
+            
             long calcResult = TickTack(); // StartValue 1/0
+            if (offsetCycles > 0) {
+                for (byte i = 1; i < offsetCycles; i++)
+                {
+                    if (calcResult > range) break;          // если число вышло за рамки Range то прирываем цикл и возвраем результат 
 
-            for (byte i = 0; i < strMax.Length - 1; i++)// заменить strmax.length на статику ~4-8ms/1m 
-            {
-                if (calcResult > range) break;          // если число вышло за рамки Range то прирываем цикл и возвраем результат 
+                    calcResult = calcResult << 1;           // обязательный сдвиг числа при каждой итерации
+                    if (TickTack() == 1) calcResult += 1;   // случайно добавляем единицу
 
-                calcResult = calcResult << 1;           // обязательный сдвиг числа при каждой итерации
-                if (TickTack() == 1) calcResult += 1;   // случайно добавляем единицу
+                    if (calcResult <= range)                // если число в рамках Range и цикл не закончен 
+                        prevResult = calcResult;            // то запускаем новую итерацию
+                    else
+                        return GetNumberInt64();
+                    // если число вышло за рамки Range перезапускаем цикл 
+                    // если это исправить это можно ускорить алгоритм на 30% вместо ~530мс/1m => 420мс/1m
+                    // пока что не знаю как это реализовать что бы не нарушить баланс
 
-                if (calcResult <= range)                // если число в рамках Range и цикл не закончен 
-                    prevResult = calcResult;            // то запускаем новую итерацию
-                else return GetNumber();                // если число вышло за рамки Range перезапускаем цикл
+                }
             }
-            return minValue + prevResult;
+            return minValue + prevResult; 
         }
 
 
-        public int GetNumberInt32()
-        {
-            return Convert.ToInt32(GetNumber());
-        }
+
+
+        public int GetNumberInt32() => unchecked((int)GetNumberInt64()); 
+        
 
         public uint ToUInt32()
         {
-            return Convert.ToUInt32(GetNumber());
+            return Convert.ToUInt32(GetNumberInt64());
         }
 
         public short ToInt16()
         {
-            return Convert.ToInt16(GetNumber());
+            return Convert.ToInt16(GetNumberInt64());
         }
 
 
         public ushort ToUInt16()
         {
-            return Convert.ToUInt16(GetNumber());
+            return Convert.ToUInt16(GetNumberInt64());
         }
 
         public bool GetBool() => (TickTack() == 1) ? true : false;  
