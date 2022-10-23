@@ -62,7 +62,6 @@ for (int j = 0; j < 5; j++)
 
     Stopwatch sw = Stopwatch.StartNew();
 
-
     Console.WriteLine($"Идеёт просчёт...");
     Console.WriteLine();
     SortedList<long, int> Engines = new SortedList<long, int>();
@@ -88,10 +87,10 @@ for (int j = 0; j < 5; j++)
 
     Console.WriteLine();
 
-    foreach (var item in Engines)
-    {
-        Console.WriteLine($"{item.Key} - {item.Value} раз");
-    }
+    //foreach (var item in Engines)
+    //{
+    //    Console.WriteLine($"{item.Key} - {item.Value} раз");
+    //}
     Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {tick.getIterrations()}");
     Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
     Console.WriteLine();
