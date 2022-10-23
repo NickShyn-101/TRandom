@@ -56,6 +56,43 @@ using TRandomLib.Core;
 //Console.WriteLine(rand.NextBool());
 
 
+var numbRange = 0b1010; // 10
+var num1 = 0; // 10
+var num2 = 1; // 10
+var num3 = 2; // 10
+var num4 = 3; // 10
+var num5 = 4; // 10
+var num6 = 5; // 10
+var num7 = 6; // 10
+var num8 = 7; // 10
+var num9 = 8; // 10
+var num10 = 9; // 10
+var num11 = 10; // 10
+var num12 = 11; // 10
+var num13 = 12; // 10
+var num14 = 13; // 10
+var num15 = 14; // 10
+var num16 = 15; // 10
+var res1 = 0;
+res1 = numbRange & num1;
+res1 = numbRange & num2;
+res1 = numbRange & num3;
+res1 = numbRange & num4;
+res1 = numbRange & num5;
+res1 = numbRange & num6;
+res1 = numbRange & num7;
+res1 = numbRange & num8;
+res1 = numbRange & num9;
+res1 = numbRange & num10;
+res1 = numbRange & num11;
+res1 = numbRange & num12;
+res1 = numbRange & num13;
+res1 = numbRange & num14;
+res1 = numbRange & num15;
+res1 = numbRange & num16;
+
+
+
 for (int j = 0; j < 5; j++)
 {
 
@@ -65,34 +102,34 @@ for (int j = 0; j < 5; j++)
     Console.WriteLine($"Идеёт просчёт...");
     Console.WriteLine();
     SortedList<long, int> Engines = new SortedList<long, int>();
-    TRandom tick = new TRandom(0, 10);
+    //TRandom tick = new TRandom();
     //Random rand = new Random();  // ~!200
     for (int i = 0; i < 1000000; i++)
     {
         //var res = tick.Next();    // 
         //var res = tick.GetNumber();               // При отключённых х конвертерах            ~!316
-        var res = tick.Next();                      // При включенный х конвертерах             ~!884
-        //var res = rand.Next(0, 100);              // если экземпляр не создаётся каждый раз   ~!196 
-        //var res = new Random().Next(0, 100);      // если экземпляр  создаётся каждый раз     ~!390
+        //var res = tick.Next();                      // При включенный х конвертерах             ~!884
+        //var res = rand.Next(0, 255);              // если экземпляр не создаётся каждый раз   ~!196 
+        var res = new Random().NextInt64();      // если экземпляр  создаётся каждый раз     ~!390
 
-        if (Engines.ContainsKey(res))
-        {
-            Engines[res] += 1;
-        }
-        else
-        {
-            Engines.Add(res, 1);
-        }
+        //if (Engines.ContainsKey(res))
+        //{
+        //    Engines[res] += 1;
+        //}
+        //else
+        //{
+        //    Engines.Add(res, 1);
+        //}
     }
 
     Console.WriteLine();
 
     //foreach (var item in Engines)
     //{
-    //    Console.WriteLine($"{item.Key} - {item.Value} раз");
+    //    //Console.WriteLine($"{item.Key} - {item.Value} раз");
     //}
-    Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций: {tick.getIterrations()}");
-    Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
+    Console.WriteLine($"Всего чисел {Engines.Sum(p => p.Value)}, : всего лишних итераций:");
+    //Console.WriteLine($"Максимальное {Engines.Max(p => p.Value)}, :Минимальное {Engines.Min(p => p.Value)}");
     Console.WriteLine();
     sw.Stop();
     Console.WriteLine($"Затрачено времени {sw.ElapsedMilliseconds}, :тики {sw.ElapsedTicks}");
