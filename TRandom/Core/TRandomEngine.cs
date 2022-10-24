@@ -25,7 +25,7 @@ namespace TRandomLib.Core
         public TRandomEngine() => this.charGenerator = new CharGeneratorSettings();
 
 
-        
+
 
         /// <summary>
         /// <para>Данный метод генерирует новый массив случайных символов из ASCII таблицы  при каждом вызове</para>
@@ -43,8 +43,8 @@ namespace TRandomLib.Core
                 TRandomTick random = new();
 
                 // соотношение количества символов из кадого массива (в выборке кратной 10 символам мы получим +3 за каджый шаг)
-                var ratio = 
-                    Math.Sign(                        
+                var ratio =
+                    Math.Sign(
                             charIndexes[i].Length / 3
                             );
 
@@ -93,10 +93,10 @@ namespace TRandomLib.Core
         public int GetCharCode()
         {
             GenerateByteList();
-    
+
             TRandomTick randomIndex = new TRandomTick();
 
-            int currentIndex = randomIndex.Tick(0, CharList.Count());
+            int currentIndex = (int)randomIndex.Tick(0, CharList.Count());
             int result = CharList[currentIndex];
 
             ClearByteList();
@@ -115,7 +115,7 @@ namespace TRandomLib.Core
         }
 
 
-        public T GenerateNumber<T>(T minValue, T MaxValue) where T: struct
+        public T GenerateNumber<T>(T minValue, T MaxValue) where T : struct
         {
             T result = default;
             return (T)result;

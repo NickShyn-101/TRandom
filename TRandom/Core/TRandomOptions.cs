@@ -3,15 +3,6 @@
     public class TRandomOptions
     {
 
-        private byte[] _buffer;
-
-        public TRandomOptions() { }
-
-        public TRandomOptions(byte[] buffer)
-        {
-            _buffer = buffer;
-        }
-
         public bool AllowSmallLetters { get; set; } = true; // 97-122
 
         public bool AllowBigLetters { get; set; } = true; // 65-90
